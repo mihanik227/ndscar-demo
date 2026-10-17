@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0f" />
+<title>Выездной осмотр авто — NDSCAR</title>
+<meta name="description" content="Выездной осмотр авто по всей Беларуси. 90+ параметров проверки, отчёт с 200+ фото за 24 часа. 140 BYN / 5500 RUB." />
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23e2012a'/><stop offset='1' stop-color='%23ff6b1a'/></linearGradient></defs><path d='M50 4 L92 27 L92 73 L50 96 L8 73 L8 27 Z' fill='url(%23g)'/><text x='50' y='68' font-size='52' font-weight='900' text-anchor='middle' fill='white' font-family='Arial'>N</text></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0f;
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-strong: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text: #f5f6fa;
+  --muted: #9aa0b4;
+  --muted-2: #6b7186;
+  --red: #e2012a;
+  --orange: #ff6b1a;
+  --gold: #ffb800;
+  --emerald: #10d9a3;
+  --accent-grad: linear-gradient(120deg, #e2012a 0%, #ff6b1a 50%, #ffb800 100%);
+  --fire-grad: linear-gradient(135deg, #e2012a 0%, #ff6b1a 100%);
+  --radius-m: 20px;
+  --radius-l: 28px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  line-height: 1.55; overflow-x: hidden; min-height: 100vh;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+body.locked { overflow: hidden; }
+
+.bg-layer { position: fixed; inset: 0; z-index: -2; background: var(--bg); overflow: hidden; }
+.orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.5; will-change: transform; pointer-events: none; }
+.orb-1 { width: 55vmax; height: 55vmax; background: radial-gradient(circle at 30% 30%, #e2012a, transparent 65%); top: -22vmax; left: -18vmax; animation: drift1 26s ease-in-out infinite alternate; }
+.orb-2 { width: 50vmax; height: 50vmax; background: radial-gradient(circle at 60% 40%, #ff6b1a, transparent 65%); bottom: -22vmax; right: -15vmax; opacity: 0.35; animation: drift2 32s ease-in-out infinite alternate; }
+.orb-3 { width: 40vmax; height: 40vmax; background: radial-gradient(circle at 50% 50%, #ffb800, transparent 65%); top: 40%; left: 50%; opacity: 0.18; animation: drift3 38s ease-in-out infinite alternate; }
+.orb-4 { width: 45vmax; height: 45vmax; background: radial-gradient(circle at 50% 50%, #8b0000, transparent 65%); top: 5%; right: 20%; opacity: 0.4; animation: drift1 30s ease-in-out infinite alternate-reverse; }
+@keyframes drift1 { 0% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(12vw,8vh,0) scale(1.15); } 100% { transform: translate3d(-6vw,14vh,0) scale(0.95); } }
+@keyframes drift2 { 0% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-14vw,-10vh,0) scale(1.2); } 100% { transform: translate3d(8vw,-6vh,0) scale(0.9); } }
+@keyframes drift3 { 0% { transform: translate3d(-50%,-50%,0) scale(1); } 50% { transform: translate3d(-42%,-58%,0) scale(1.25); } 100% { transform: translate3d(-58%,-44%,0) scale(0.9); } }
+.bg-noise { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 18px; }
+
+/* HEADER */
+.header { position: sticky; top: 0; z-index: 100; backdrop-filter: blur(22px) saturate(160%); -webkit-backdrop-filter: blur(22px) saturate(160%); background: rgba(10,10,15,.6); border-bottom: 1px solid var(--border); transition: background .3s ease, border-color .3s ease; }
+.header.scrolled { background: rgba(10,10,15,.9); border-bottom-color: var(--border-strong); }
+.nav { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 14px; }
+.logo { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--text); flex-shrink: 0; }
+.logo-mark { width: 40px; height: 40px; display: grid; place-items: center; flex-shrink: 0; }
+.logo-mark svg { width: 100%; height: 100%; filter: drop-shadow(0 0 12px rgba(226,1,42,.55)); }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-text .brand { font-size: 1.15rem; font-weight: 900; letter-spacing: 0.02em; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.logo-text .tag { font-size: 0.6rem; color: var(--muted); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+.nav-links { display: none; align-items: center; gap: 2px; list-style: none; }
+.nav-links a { display: block; padding: 9px 14px; font-size: 0.9rem; font-weight: 500; color: var(--muted); text-decoration: none; border-radius: 10px; transition: color .2s, background .2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--glass); }
+.nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.nav-phone { display: none; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 700; color: var(--text); text-decoration: none; white-space: nowrap; transition: color .2s; }
+.nav-phone:hover { color: var(--orange); }
+.nav-phone svg { width: 16px; height: 16px; fill: var(--red); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 0.88rem; font-weight: 600; padding: 11px 20px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; text-decoration: none; white-space: nowrap; transition: transform .18s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease, color .2s; }
+.btn:active { transform: scale(0.97); }
+.btn-ghost { color: var(--text); background: var(--glass); border-color: var(--border); }
+.btn-ghost:hover { background: var(--glass-strong); border-color: var(--border-strong); }
+.btn-fire { color: #fff; background: var(--fire-grad); background-size: 200% 200%; box-shadow: 0 8px 30px rgba(226,1,42,.35); }
+.btn-fire:hover { box-shadow: 0 12px 44px rgba(255,107,26,.55); animation: gradShift 3s ease infinite; }
+@keyframes gradShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.btn-lg { padding: 16px 32px; font-size: 1rem; border-radius: 15px; }
+.burger { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 42px; height: 42px; padding: 0 10px; background: var(--glass); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; }
+.burger span { display: block; height: 2px; width: 100%; background: var(--text); border-radius: 2px; transition: transform .3s ease, opacity .3s ease; }
+.burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu { position: fixed; top: 68px; left: 0; right: 0; z-index: 99; background: rgba(10,10,15,.98); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); padding: 16px 18px 26px; display: flex; flex-direction: column; gap: 6px; transform: translateY(-120%); opacity: 0; pointer-events: none; transition: transform .38s cubic-bezier(.4,0,.2,1), opacity .3s; max-height: calc(100vh - 68px); overflow-y: auto; }
+.mobile-menu.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.mobile-menu a { padding: 15px 16px; color: var(--muted); text-decoration: none; font-size: 1rem; font-weight: 500; border-radius: 12px; transition: background .2s, color .2s; }
+.mobile-menu a:hover { background: var(--glass); color: var(--text); }
+.mobile-menu .divider { height: 1px; background: var(--border); margin: 10px 0; }
+.mobile-menu .btn { width: 100%; margin-top: 4px; }
+
+/* HERO */
+.hero-inspect { padding: 44px 0 32px; position: relative; }
+.breadcrumbs { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted-2); margin-bottom: 20px; flex-wrap: wrap; }
+.breadcrumbs a { color: var(--muted); text-decoration: none; }
+.breadcrumbs a:hover { color: var(--text); }
+.breadcrumbs .sep { opacity: 0.5; }
+.breadcrumbs .current { color: var(--text); }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #ffd982; background: rgba(255,184,0,.08); border: 1px solid rgba(255,184,0,.3); border-radius: 999px; margin-bottom: 22px; }
+.hero-badge .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 rgba(255,184,0,.7); animation: pulseGold 2s infinite; }
+@keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(255,184,0,.6); } 70% { box-shadow: 0 0 0 10px rgba(255,184,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,184,0,0); } }
+.hero-inspect h1 { font-size: clamp(2rem, 8vw, 3.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 20px; }
+.hero-inspect h1 .grad { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-inspect p.lead { font-size: clamp(1rem, 3.6vw, 1.15rem); color: var(--muted); max-width: 55ch; margin-bottom: 30px; }
+.hero-price { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; }
+.hero-price .big { font-size: clamp(2.2rem, 9vw, 3.2rem); font-weight: 900; letter-spacing: -0.03em; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+.hero-price .note { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+.hero-actions { display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; }
+.hero-actions .btn { width: 100%; }
+.hero-features { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero-feature { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; font-size: 0.82rem; font-weight: 600; color: var(--text); background: var(--glass); border: 1px solid var(--border); border-radius: 999px; }
+.hero-feature .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+
+/* SECTIONS */
+.section { padding: 60px 0; }
+.sec-head { margin-bottom: 32px; text-align: center; }
+.sec-head .kicker { display: inline-block; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+.sec-head h2 { font-size: clamp(1.5rem, 6vw, 2.4rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 12px; }
+.sec-head h2 .grad { background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.sec-head p { color: var(--muted); max-width: 62ch; margin: 0 auto; font-size: 0.95rem; }
+
+/* WHAT WE CHECK */
+.check-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.check-item { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius-m); transition: border-color .25s, background .25s, transform .2s; }
+.check-item:hover { border-color: var(--border-strong); background: var(--glass-strong); transform: translateY(-2px); }
+.check-item .ico { flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(226,1,42,.12); border: 1px solid rgba(226,1,42,.3); font-size: 1.1rem; }
+.check-item .txt { font-size: 0.92rem; color: var(--text); line-height: 1.5; }
+.check-item .txt strong { display: block; margin-bottom: 3px; }
+
+/* WHAT YOU GET */
+.get-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.get-card { padding: 24px 22px; background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius-m); position: relative; overflow: hidden; transition: transform .3s, border-color .3s; }
+.get-card:hover { transform: translateY(-4px); border-color: var(--border-strong); }
+.get-card .num { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.04em; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 10px; }
+.get-card h3 { font-size: 1.02rem; font-weight: 700; margin-bottom: 8px; }
+.get-card p { font-size: 0.9rem; color: var(--muted); }
+
+/* TARIFFS */
+.tariffs { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.tariff { padding: 28px 24px; background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius-l); position: relative; overflow: hidden; transition: transform .3s, border-color .3s; display: flex; flex-direction: column; }
+.tariff:hover { transform: translateY(-4px); border-color: var(--border-strong); }
+.tariff.featured { border-color: rgba(226,1,42,.5); box-shadow: 0 0 0 1px rgba(226,1,42,.3), 0 20px 60px rgba(226,1,42,.2); }
+.tariff.featured::before { content: "ХИТ"; position: absolute; top: 16px; right: 16px; padding: 5px 12px; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.1em; color: #1a1a24; background: linear-gradient(135deg, #ffb800, #ff8c00); border-radius: 8px; box-shadow: 0 4px 16px rgba(255,184,0,.5); }
+.tariff h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; }
+.tariff .price { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 16px; }
+.tariff .price small { font-size: 0.85rem; color: var(--muted-2); font-weight: 600; -webkit-text-fill-color: var(--muted-2); }
+.tariff ul { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; flex: 1; }
+.tariff ul li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+.tariff ul li::before { content: "✓"; flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: rgba(16,217,163,.15); color: var(--emerald); font-size: 0.72rem; font-weight: 900; margin-top: 1px; }
+
+/* FORM */
+.form-wrap { max-width: 720px; margin: 0 auto; padding: 32px 22px; background: var(--glass); border: 1px solid var(--border-strong); border-radius: var(--radius-l); position: relative; overflow: hidden; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.form-wrap::before { content: ""; position: absolute; top: -1px; left: -1px; right: -1px; height: 1px; background: linear-gradient(90deg, transparent, rgba(226,1,42,.9), rgba(255,184,0,.9), transparent); }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.form-grid input, .form-grid textarea { width: 100%; font-family: inherit; font-size: 0.95rem; font-weight: 500; color: var(--text); background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 12px; padding: 0 16px; height: 54px; transition: border-color .25s, box-shadow .25s, background .25s; }
+.form-grid textarea { height: auto; min-height: 100px; padding: 16px; resize: vertical; line-height: 1.5; }
+.form-grid input::placeholder, .form-grid textarea::placeholder { color: var(--muted-2); }
+.form-grid input:focus, .form-grid textarea:focus { outline: none; border-color: var(--orange); background: var(--glass-strong); box-shadow: 0 0 0 4px rgba(255,107,26,.15); }
+.form-grid .full { grid-column: 1 / -1; }
+.form-success { display: none; padding: 14px 18px; margin-bottom: 16px; background: rgba(16,217,163,.1); border: 1px solid rgba(16,217,163,.3); border-radius: 12px; color: #6ee7c0; font-size: 0.9rem; font-weight: 600; text-align: center; }
+.form-success.show { display: block; }
+.form-submit { width: 100%; padding: 18px; margin-top: 8px; font-family: inherit; font-size: 1rem; font-weight: 800; color: #fff; background: var(--fire-grad); background-size: 200% 200%; border: none; border-radius: 15px; cursor: pointer; box-shadow: 0 10px 34px rgba(226,1,42,.45); transition: transform .18s, box-shadow .3s; }
+.form-submit:hover { animation: gradShift 3s ease infinite; box-shadow: 0 14px 50px rgba(255,107,26,.55); }
+.form-submit:active { transform: scale(0.98); }
+.form-submit:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
+.agreement { display: flex; gap: 10px; align-items: flex-start; font-size: 0.74rem; color: var(--muted-2); margin: 14px 0 0; line-height: 1.4; }
+.agreement input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--red); flex-shrink: 0; }
+
+/* FOOTER */
+.footer { border-top: 1px solid var(--border); padding: 40px 0 30px; background: linear-gradient(180deg, transparent, rgba(255,255,255,.015)); }
+.footer-bottom { display: flex; flex-direction: column; gap: 12px; font-size: 0.8rem; color: var(--muted-2); }
+.footer a { color: var(--muted); text-decoration: none; transition: color .2s; }
+.footer a:hover { color: var(--text); }
+
+/* FLOATING */
+.floating { position: fixed; right: 16px; bottom: 16px; z-index: 90; display: flex; flex-direction: column; gap: 10px; }
+.fbtn { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--glass-strong); border: 1px solid var(--border-strong); color: var(--text); text-decoration: none; cursor: pointer; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,.4); transition: transform .2s, border-color .2s, background .2s; }
+.fbtn:hover { transform: translateY(-3px); border-color: var(--orange); }
+.fbtn svg { width: 22px; height: 22px; }
+.fbtn.tg svg { fill: #3bb0ff; }
+.fbtn.vb svg { fill: #7b519d; }
+.fbtn.wa svg { fill: #25d366; }
+.fbtn.call { background: var(--fire-grad); border-color: transparent; box-shadow: 0 10px 30px rgba(226,1,42,.45); }
+.fbtn.call svg { fill: #fff; }
+.fbtn.call:hover { box-shadow: 0 14px 40px rgba(255,107,26,.6); }
+
+/* BREAKPOINTS */
+@media (min-width: 600px) {
+  .container { padding: 0 28px; }
+  .section { padding: 80px 0; }
+  .hero-inspect { padding: 60px 0 40px; }
+  .hero-actions { flex-direction: row; }
+  .hero-actions .btn { width: auto; }
+  .check-grid { grid-template-columns: repeat(2, 1fr); }
+  .get-grid { grid-template-columns: repeat(2, 1fr); }
+  .tariffs { grid-template-columns: repeat(3, 1fr); }
+  .form-wrap { padding: 44px 36px; }
+  .form-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: row; justify-content: space-between; align-items: center; }
+}
+@media (min-width: 900px) {
+  .nav { height: 78px; }
+  .mobile-menu { top: 78px; }
+  .nav-links { display: flex; }
+  .burger { display: none; }
+  .nav-phone { display: inline-flex; }
+  .hero-inspect { padding: 80px 0 60px; }
+  .get-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
+</div>
+<div class="bg-noise" aria-hidden="true"></div>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="logo">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2012a"/><stop offset="1" stop-color="#ff6b1a"/></linearGradient></defs><path d="M50 4 L92 27 L92 73 L50 96 L8 73 L8 27 Z" fill="url(#lg)"/><text x="50" y="68" font-size="52" font-weight="900" text-anchor="middle" fill="#fff" font-family="Inter, Arial">N</text></svg>
+        </span>
+        <span class="logo-text"><span class="brand">NDSCAR</span><span class="tag">Авто из Китая</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="inspection.html" class="active">Осмотр авто</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="tel:+375296469999" class="nav-phone"><svg viewBox="0 0 24 24"><path d="M23.46 18.94l-3.7-3.7c-.74-.74-1.96-.71-2.72.05l-1.87 1.87a1.02 1.02 0 01-.37-.21c-1.18-.65-2.79-1.55-4.49-3.25-1.7-1.7-2.6-3.32-3.25-4.5a1.02 1.02 0 01-.2-.36L8.1 7.59l.62-.62c.77-.77.79-1.99.05-2.73L5.06.54C4.32-.2 3.1-.18 2.34.6L1.3 1.64l.03.03c-.35.45-.64.96-.86 1.52-.2.53-.33 1.03-.38 1.54-.5 4.06 1.36 7.77 6.39 12.8C13.43 24.48 19.03 23.95 19.27 23.93c.53-.07 1.03-.19 1.55-.39.55-.21 1.06-.51 1.51-.86l.02.02 1.06-1.03c.77-.77.79-2 .05-2.73z"/></svg>8029 646-99-99</a>
+        <a href="#form" class="btn btn-fire">Заказать осмотр</a>
+        <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Главная</a>
+  <a href="catalog.html">Каталог</a>
+  <a href="inspection.html">Выездной осмотр</a>
+  <a href="contacts.html">Контакты</a>
+  <div class="divider"></div>
+  <a href="tel:+375296469999" class="btn btn-ghost">📞 8029 646-99-99</a>
+  <a href="#form" class="btn btn-fire">Заказать осмотр</a>
+</div>
+
+<!-- HERO -->
+<section class="hero-inspect">
+  <div class="container">
+    <nav class="breadcrumbs"><a href="index.html">Главная</a><span class="sep">›</span><span class="current">Выездной осмотр</span></nav>
+    <div class="hero-badge"><span class="pulse"></span>Проверка по 90+ параметрам · отчёт за 24 часа</div>
+    <h1>Выездной осмотр авто <span class="grad">по всей Беларуси</span></h1>
+    <p class="lead">Эксперт приедет на место, проверит автомобиль по 90+ параметрам и пришлёт детальный отчёт с 200+ фото и видео в течение 24 часов. Если осмотр не состоится — вернём деньги.</p>
+    <div class="hero-price">
+      <span class="big">140 BYN</span>
+      <span class="note">/ 5500 RUB · Минск, Брест, Гродно, Гомель, Витебск, Могилёв и любой город РБ</span>
+    </div>
+    <div class="hero-actions">
+      <a href="#form" class="btn btn-fire btn-lg">Заказать осмотр</a>
+      <a href="tel:+375296469999" class="btn btn-ghost btn-lg">Позвонить</a>
+    </div>
+    <div class="hero-features">
+      <span class="hero-feature"><span class="dot"></span>Выезд за 24 часа</span>
+      <span class="hero-feature"><span class="dot"></span>Отчёт с фото и видео</span>
+      <span class="hero-feature"><span class="dot"></span>Юридическая чистота</span>
+      <span class="hero-feature"><span class="dot"></span>Возврат денег</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE CHECK -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="kicker">Что проверяем</span>
+      <h2>90+ <span class="grad">параметров</span> состояния авто</h2>
+      <p>Полная диагностика — от кузова и двигателя до юридической чистоты и реального пробега.</p>
+    </div>
+    <div class="check-grid">
+      <div class="check-item"><span class="ico">🚗</span><div class="txt"><strong>Внешний осмотр</strong>Кузов, сколы, царапины, ржавчина, следы ремонта</div></div>
+      <div class="check-item"><span class="ico">📏</span><div class="txt"><strong>Реальный пробег</strong>Прямые и косвенные показатели скрутки</div></div>
+      <div class="check-item"><span class="ico">🔧</span><div class="txt"><strong>Двигатель</strong>Подкапотное пространство, состояние, течи</div></div>
+      <div class="check-item"><span class="ico">🛞</span><div class="txt"><strong>Ходовая</strong>Рулевое управление, подвеска, тормоза</div></div>
+      <div class="check-item"><span class="ico">⚖️</span><div class="txt"><strong>Юридическая чистота</strong>Залог, угон, розыск, ограничения</div></div>
+      <div class="check-item"><span class="ico">📸</span><div class="txt"><strong>200+ фото и видео</strong>Все ракурсы, дефекты, комплектация</div></div>
+      <div class="check-item"><span class="ico">💰</span><div class="txt"><strong>Оценка стоимости</strong>Реальная рыночная цена + торг с продавцом</div></div>
+      <div class="check-item"><span class="ico">✅</span><div class="txt"><strong>Рекомендация</strong>Стоит ли покупать именно это авто</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section class="section" style="background: rgba(255,255,255,.01);">
+  <div class="container">
+    <div class="sec-head">
+      <span class="kicker">Что получаете</span>
+      <h2>Полный отчёт <span class="grad">за 24 часа</span></h2>
+      <p>Вы получаете не просто список галочек, а профессиональное заключение эксперта.</p>
+    </div>
+    <div class="get-grid">
+      <div class="get-card"><div class="num">01</div><h3>Диагностический лист</h3><p>Полный отчёт по 90+ параметрам с оценкой состояния каждого узла.</p></div>
+      <div class="get-card"><div class="num">02</div><h3>200+ фото и видео</h3><p>Все ракурсы, дефекты, комплектация, состояние салона и подкапотного.</p></div>
+      <div class="get-card"><div class="num">03</div><h3>Юридическая чистота</h3><p>Проверка залога, угона, ограничений на регистрацию.</p></div>
+      <div class="get-card"><div class="num">04</div><h3>История эксплуатации</h3><p>Полная история авто из РФ и США, если она есть в базах.</p></div>
+      <div class="get-card"><div class="num">05</div><h3>Рекомендация эксперта</h3><p>Письменное заключение — стоит ли покупать и почему.</p></div>
+      <div class="get-card"><div class="num">06</div><h3>Торг с продавцом</h3><p>Эксперт аргументированно торгуется, чтобы снизить цену.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TARIFFS -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="kicker">Тарифы</span>
+      <h2>Выберите <span class="grad">подходящий формат</span></h2>
+      <p>Разовая проверка или полный подбор под ключ — на ваш выбор.</p>
+    </div>
+    <div class="tariffs">
+      <div class="tariff">
+        <h3>Выездной осмотр</h3>
+        <div class="price">140 <small>BYN</small></div>
+        <ul>
+          <li>Проверка по 90+ параметрам</li>
+          <li>200+ фото и видео</li>
+          <li>Юридическая чистота (+30 BYN)</li>
+          <li>Отчёт за 24 часа</li>
+          <li>Возврат денег при отмене</li>
+        </ul>
+        <a href="#form" class="btn btn-ghost">Заказать</a>
+      </div>
+      <div class="tariff featured">
+        <h3>Эксперт на день</h3>
+        <div class="price">850 <small>BYN</small></div>
+        <ul>
+          <li>Неограниченное число авто</li>
+          <li>В одном городе, весь день</li>
+          <li>Консультация и торг</li>
+          <li>Помощь в оформлении</li>
+          <li>Экономия на разовых осмотрах</li>
+        </ul>
+        <a href="#form" class="btn btn-fire">Заказать</a>
+      </div>
+      <div class="tariff">
+        <h3>Подбор «под ключ»</h3>
+        <div class="price">1600 <small>BYN</small></div>
+        <ul>
+          <li>Поиск авто по вашим критериям</li>
+          <li>Проверка и торг с продавцом</li>
+          <li>Лучший вариант на рынке</li>
+          <li>Сопровождение до регистрации</li>
+          <li>Экономия времени и денег</li>
+        </ul>
+        <a href="#form" class="btn btn-ghost">Заказать</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="section" id="form">
+  <div class="container">
+    <div class="sec-head">
+      <span class="kicker">Заявка</span>
+      <h2>Заказать <span class="grad">выездной осмотр</span></h2>
+      <p>Заполните форму — менеджер свяжется в течение 15 минут, уточнит детали и согласует время.</p>
+    </div>
+    <div class="form-wrap">
+      <div class="form-success" id="formSuccess">✓ Заявка отправлена! Менеджер свяжется с вами в течение 15 минут.</div>
+      <form id="inspectionForm" novalidate>
+        <div class="form-grid">
+          <input type="text" name="name" placeholder="Ваше имя" autocomplete="name" required />
+          <input type="tel" name="phone" placeholder="Телефон (+375 ...)" autocomplete="tel" required />
+          <input type="text" name="city" placeholder="Город" required />
+          <input type="text" name="car" placeholder="Ссылка на авто или модель" />
+          <textarea name="message" class="full" placeholder="Комментарий (необязательно)" rows="3"></textarea>
+        </div>
+        <label class="agreement">
+          <input type="checkbox" name="agreement" required checked />
+          <span>Согласен на обработку персональных данных</span>
+        </label>
+        <button type="submit" class="form-submit" id="formSubmit">Отправить заявку</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> NDSCAR. Все права защищены.</span>
+      <span><a href="index.html">На главную</a> · <a href="catalog.html">Каталог</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING -->
+<div class="floating">
+  <a href="https://t.me/ndscar" target="_blank" rel="noopener" class="fbtn tg" aria-label="Telegram">
+    <svg viewBox="0 0 24 24"><path d="M9.02 14.55l-.38 5.35c.54 0 .78-.23 1.06-.51l2.55-2.44 5.29 3.87c.97.54 1.65.26 1.91-.89l3.47-16.26c.31-1.43-.52-1.99-1.46-1.64L1.06 9.83C-.32 10.37-.3 11.15.83 11.5l6.21 1.94L21.16 5.54c.57-.38 1.09-.17.66.21L9.02 14.55z"/></svg>
+  </a>
+  <a href="viber://chat?number=80296469999" target="_blank" rel="noopener" class="fbtn vb" aria-label="Viber">
+    <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12c0 2.1.5 4.1 1.5 5.9L0 24l6.3-1.6C8 23.4 10 24 12 24c6.6 0 12-5.4 12-12S18.6 0 12 0zm5.6 16.8c-.3.7-1.4 1.3-2.3 1.5-.6.1-1.4.2-4-.9-3.4-1.3-5.5-4.6-5.7-4.8-.1-.2-1.3-1.8-1.3-3.3 0-1.6.8-2.3 1.2-2.7.3-.3.7-.4 1.2-.4h.3c.3 0 .5 0 .7.5.3.6.9 2.2 1 2.3.1.2.1.4 0 .6-.1.2-.2.3-.3.5-.2.2-.3.3-.5.5-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.7 1.6.3.1.5.1.7-.1.3-.3.6-.7.9-1.1.2-.3.5-.4.8-.2.3.1 1.9.9 2.2 1 .3.2.6.2.6.4.1.2.1.8-.2 1.5z"/></svg>
+  </a>
+  <a href="https://wa.me/375296469999" target="_blank" rel="noopener" class="fbtn wa" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12c0 2.1.5 4.1 1.5 5.9L0 24l6.3-1.6C8 23.4 10 24 12 24c6.6 0 12-5.4 12-12S18.6 0 12 0zm5.6 16.8c-.3.7-1.4 1.3-2.3 1.5-.6.1-1.4.2-4-.9-3.4-1.3-5.5-4.6-5.7-4.8-.1-.2-1.3-1.8-1.3-3.3 0-1.6.8-2.3 1.2-2.7.3-.3.7-.4 1.2-.4h.3c.3 0 .5 0 .7.5.3.6.9 2.2 1 2.3.1.2.1.4 0 .6-.1.2-.2.3-.3.5-.2.2-.3.3-.5.5-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.7 1.6.3.1.5.1.7-.1.3-.3.6-.7.9-1.1.2-.3.5-.4.8-.2.3.1 1.9.9 2.2 1 .3.2.6.2.6.4.1.2.1.8-.2 1.5z"/></svg>
+  </a>
+  <a href="tel:+375296469999" class="fbtn call" aria-label="Позвонить">
+    <svg viewBox="0 0 24 24"><path d="M23.46 18.94l-3.7-3.7c-.74-.74-1.96-.71-2.72.05l-1.87 1.87a1.02 1.02 0 01-.37-.21c-1.18-.65-2.79-1.55-4.49-3.25-1.7-1.7-2.6-3.32-3.25-4.5a1.02 1.02 0 01-.2-.36L8.1 7.59l.62-.62c.77-.77.79-1.99.05-2.73L5.06.54C4.32-.2 3.1-.18 2.34.6L1.3 1.64l.03.03c-.35.45-.64.96-.86 1.52-.2.53-.33 1.03-.38 1.54-.5 4.06 1.36 7.77 6.39 12.8C13.43 24.48 19.03 23.95 19.27 23.93c.53-.07 1.03-.19 1.55-.39.55-.21 1.06-.51 1.51-.86l.02.02 1.06-1.03c.77-.77.79-2 .05-2.73z"/></svg>
+  </a>
+</div>
+
+<script>
+/* ============================================================
+   UTILS
+============================================================ */
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+/* ============================================================
+   YEAR
+============================================================ */
+const yearEl = $('#year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+/* ============================================================
+   BURGER
+============================================================ */
+const burger = $('#burger');
+const mobileMenu = $('#mobileMenu');
+
+function closeMenu() {
+  if (!burger || !mobileMenu) return;
+  burger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  burger.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+if (burger && mobileMenu) {
+  burger.addEventListener('click', () => {
+    const open = burger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  $$('a', mobileMenu).forEach(a => a.addEventListener('click', closeMenu));
+}
+
+/* ============================================================
+   HEADER SCROLL
+============================================================ */
+const header = $('#header');
+window.addEventListener('scroll', () => {
+  if (header) header.classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+/* ============================================================
+   FORM
+============================================================ */
+const form = $('#inspectionForm');
+const formSuccess = $('#formSuccess');
+const formSubmit = $('#formSubmit');
+
+if (form) {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = form.querySelector('input[name="name"]');
+    const phone = form.querySelector('input[name="phone"]');
+    const city = form.querySelector('input[name="city"]');
+    const agree = form.querySelector('input[name="agreement"]');
+
+    let valid = true;
+    if (name && name.value.trim().length < 2) { name.style.borderColor = '#e2012a'; valid = false; }
+    else if (name) name.style.borderColor = '';
+    if (phone && phone.value.trim().length < 6) { phone.style.borderColor = '#e2012a'; valid = false; }
+    else if (phone) phone.style.borderColor = '';
+    if (city && city.value.trim().length < 2) { city.style.borderColor = '#e2012a'; valid = false; }
+    else if (city) city.style.borderColor = '';
+    if (agree && !agree.checked) { alert('Пожалуйста, согласитесь на обработку данных'); valid = false; }
+    if (!valid) return;
+
+    if (formSubmit) { formSubmit.disabled = true; formSubmit.textContent = '⏳ Отправляем…'; }
+
+    // Демо-отправка в localStorage
+    try {
+      const data = { type: 'inspection' };
+      new FormData(form).forEach((v, k) => { data[k] = v; });
+      data.ts = new Date().toISOString();
+      const list = JSON.parse(localStorage.getItem('ndscar_leads') || '[]');
+      list.push(data);
+      localStorage.setItem('ndscar_leads', JSON.stringify(list));
+    } catch (err) {}
+
+    setTimeout(() => {
+      if (formSuccess) formSuccess.classList.add('show');
+      if (formSubmit) { formSubmit.disabled = false; formSubmit.textContent = 'Отправить заявку'; }
+      form.reset();
+      if (formSuccess) {
+        setTimeout(() => formSuccess.classList.remove('show'), 5000);
+      }
+    }, 700);
+  });
+}
+
+/* ============================================================
+   SMOOTH SCROLL
+============================================================ */
+$$('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    const id = a.getAttribute('href');
+    if (id === '#' || id.length < 2) return;
+    const target = document.querySelector(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    closeMenu();
+  });
+});
+</script>
+</body>
+</html>
